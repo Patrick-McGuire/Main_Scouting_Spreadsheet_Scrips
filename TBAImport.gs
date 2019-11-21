@@ -2,8 +2,12 @@
 
 // Gets the start times of every match from the event specified in 'Big Brother', and puts them into the spreadsheet, so they can be made into twitch links
 function getTimes() {
+  // Clear old Times
+  setStatus('Clear old Times');
   SpreadsheetApp.getActive().getActiveSheet().getRange('Match Schedule!AJ4:AL152').clearContent();
   
+  // Pull from TBA
+  setStatus('Importing Match Times');
   var match_numbers = [];
   var match_types = [];
   var match_time = [];
@@ -29,10 +33,11 @@ function getTimes() {
       match_time.push([tbaImport1[j].actual_time]);  //actual_time
     }
   
-  //Put the team numbers into the sheet
+  //Put the times into the sheet
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AL4:AL' + (match_numbers.length+3)).setValues(match_numbers);
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AK4:AK' + (match_types.length+3)).setValues(match_types);
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AJ4:AJ' + (match_time.length+3)).setValues(match_time);
+  setStatus('Done')
 }
 
 // Imports the math schedule for the event specified in 'Big Brother' from TBA, and puts it into the sheet
@@ -41,6 +46,7 @@ function ImportSchedule() {
   if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B18').getValue() == 1){
    
   //Clear old match data
+  setStatus('Clearing match schedule')
   ClearMatchSchedule();
   
   var redOne = [];
@@ -57,7 +63,7 @@ function ImportSchedule() {
    var eventKey = SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
   
   //Import schedule
-  
+  setStatus('Importing schedule from TBA')
   var urlB = "https://www.thebluealliance.com/api/v3/event/"+eventKey+"/matches";
     var optionsA = {
       "method": "GET",
@@ -98,6 +104,7 @@ function ImportSchedule() {
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!B2:B' + (matchType.length+1)).setValues(matchType); 
    //Disable Function
   SpreadsheetApp.getActiveSheet().getRange('Big Brother!D18').setValue('Disabled');
+  setStatus('Done')
 }
 }
 
@@ -106,15 +113,17 @@ function ImportTeams() {
   
   if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B12').getValue() == 1){
   
-     var listOfTeams = [];
+  var listOfTeams = [];
   
   //Clear old data
+  setStatus('Clearing list of teams')
   ClearTeams()
   
   //Get event key from TBA Import sheet
   var eventKey = SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
   
   //Import teams
+  setStatus('Importing teams from TBA')
   var urlA = "https://www.thebluealliance.com/api/v3/event/"+eventKey+"/teams";
     var optionsA = {
       "method": "GET",
@@ -140,12 +149,13 @@ function ImportTeams() {
   
   //Disable Function
   SpreadsheetApp.getActiveSheet().getRange('Big Brother!D12').setValue('Disabled');
+  setStatus('Done')
   };
   };
 
 // Imports every match of every team for the event specified in 'Big Brother'from TBA, and puts it into the sheet
 function ImportTeamsMatches(){
-
+  
   if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B15').getValue() == 1){
   ImportTeams()
   
@@ -154,8 +164,10 @@ function ImportTeamsMatches(){
   var matchTypes = [];
   
   //Clear old match data
+  setStatus("Clearing team's matches")
   ClearTeamsMatches()
-
+  
+  setStatus("Importing team's matched from TBA")
   //Get event key from TBA Import sheet
   var eventKey = SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
   
@@ -176,6 +188,8 @@ function ImportTeamsMatches(){
     //Get the next team number
     var teamCell = a + 4;
     var teamNumber = SpreadsheetApp.getActiveSheet().getRange('Team Matches!C'+teamCell).getValue();
+    
+    setStatus('Imporing team '+ teamNumber + "'s matches")
     
     //Pull the data from TBA  
     var url = "https://www.thebluealliance.com/api/v3/team/frc"+teamNumber+"/event/"+eventKey+"/matches";
@@ -211,7 +225,10 @@ function ImportTeamsMatches(){
   }
   //Disable Function
   SpreadsheetApp.getActiveSheet().getRange('Big Brother!D15').setValue('Disabled');
+  setStatus('Done')
 }
 }
- 
 
+function setStatus(text){
+  SpreadsheetApp.getActiveSheet().getRange('Big Brother!E16').setValue(text);
+}
