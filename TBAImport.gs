@@ -30,6 +30,7 @@ function getTimes() {
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AL4:AL' + (match_numbers.length+3)).setValues(match_numbers);
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AK4:AK' + (match_types.length+3)).setValues(match_types);
   SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AJ4:AJ' + (match_time.length+3)).setValues(match_time);
+  
   setStatus('Done')
 }
 
@@ -47,19 +48,7 @@ function ImportSchedule() {
     var eventKey = getEventKey();
   
     //Import schedule
-    setStatus('Importing schedule from TBA')
-    var urlB = "https://www.thebluealliance.com/api/v3/event/"+eventKey+"/matches";
-    var optionsA = {
-      "method": "GET",
-      "headers": {
-        "X-TBA-Auth-Key": "ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6"
-      },
-      "payload": {
-      }
-     };
-    var tbaImportJSON = JSON.parse(UrlFetchApp.fetch(urlB, optionsA));
-    
-    Logger.log(tbaImportJSON);
+    var tbaImportJSON = importTBA("/event/" + eventKey + "/matches");
   
     var redOne = [];
     var redTwo = [];
@@ -99,129 +88,116 @@ function ImportSchedule() {
     SpreadsheetApp.getActiveSheet().getRange('Match Schedule!B2:B' + (matchType.length+1)).setValues(matchType); 
     //Disable Function
     SpreadsheetApp.getActiveSheet().getRange('Big Brother!D18').setValue('Disabled');
+    
     setStatus('Done')
   }
 }
 
 // Imports a list of teams for the event specified in 'Big Brother'from TBA, and puts it into the sheet
 function ImportTeams() {
-  
+  // If the function is 'enabled' in the big brother sheet, then run the code
   if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B12').getValue() == 1){
   
-  var listOfTeams = [];
+    var listOfTeams = [];
   
-  //Clear old data
-  setStatus('Clearing list of teams')
-  ClearTeams()
+    //Clear old data
+    setStatus('Clearing list of teams')
+    ClearTeams()
   
-  //Get event key from TBA Import sheet
-  var eventKey = SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
+    //Get event key from TBA Import sheet
+    var eventKey = getEventKey();
   
-  //Import teams
-  setStatus('Importing teams from TBA')
-  var urlA = "https://www.thebluealliance.com/api/v3/event/"+eventKey+"/teams";
-    var optionsA = {
-      "method": "GET",
-      "headers": {
-        "X-TBA-Auth-Key": "ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6"
-      },
-      "payload": {
-      }
-    };
-    var tbaImport1 = JSON.parse(UrlFetchApp.fetch(urlA, optionsA));
-    
-  Logger.log(tbaImport1);
+    //Import teams
+    setStatus('Importing teams from TBA')
+    var tbaImportJSON = importTBA("/event/"+eventKey+"/teams");  
   
-    for(var j = 0; j < tbaImport1.length ; j++){
-      listOfTeams.push([tbaImport1[j].team_number]); 
+    for(var j = 0; j < tbaImportJSON.length ; j++){
+      listOfTeams.push([tbaImportJSON[j].team_number]); 
     }
     
-  //Sort data
-  listOfTeams.sort(function(a, b){return a - b});
+    //Sort data
+    listOfTeams.sort(function(a, b){return a - b});
   
-  //Put the team numbers into the sheet
-  SpreadsheetApp.getActiveSheet().getRange('Team Matches!C4:C' + (listOfTeams.length+3)).setValues(listOfTeams);
+    //Put the team numbers into the sheet
+    SpreadsheetApp.getActiveSheet().getRange('Team Matches!C4:C' + (listOfTeams.length+3)).setValues(listOfTeams);
   
-  //Disable Function
-  SpreadsheetApp.getActiveSheet().getRange('Big Brother!D12').setValue('Disabled');
-  setStatus('Done')
+    //Disable Function
+    SpreadsheetApp.getActiveSheet().getRange('Big Brother!D12').setValue('Disabled');
+    setStatus('Done')
   };
-  };
+};
 
 // Imports every match of every team for the event specified in 'Big Brother'from TBA, and puts it into the sheet
 function ImportTeamsMatches(){
   
   if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B15').getValue() == 1){
-  ImportTeams()
+    // Import Teams
+    ImportTeams()
   
-  //Define all of the areas of data that we need
-  var matchNumbers = [];
-  var matchTypes = [];
+    //Define all of the areas of data that we need
+    var matchTypes = [];
+    var allMatchNumbers = [4];
+    var numberOfTeams = 0;
   
-  //Clear old match data
-  setStatus("Clearing team's matches")
-  ClearTeamsMatches()
+    //Clear old match data
+    setStatus("Clearing team's matches")
+    ClearTeamsMatches()
   
-  setStatus("Importing team's matched from TBA")
-  //Get event key from TBA Import sheet
-  var eventKey = SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
-  
-  
-  //Import matches
-  
-  //Get the number of teams to determen how manny times the folowing for loop needs to run
-  var numberOfTeams = SpreadsheetApp.getActiveSheet().getRange('Team Matches!D105').getValue();
-  //Import matches loop, this is where we get the match data for every team
+    setStatus("Importing team's matched from TBA")
+    //Get event key from TBA Import sheet
+    var eventKey = getEventKey();
   
   
-  for(var a = 0; a < numberOfTeams; a++){
+    //Import matches
+  
+    //Get the number of teams to determen how manny times the folowing for loop needs to run
+    var numberOfTeams = SpreadsheetApp.getActiveSheet().getRange('Team Matches!D105').getValue();
+    //Import matches loop, this is where we get the match data for every team
+  
+    // Go though all of the teams, and import their matches
+    for(var a = 0; a < numberOfTeams; a++){
+      matchNumbers = []
+      //Reset arays
+      matchNumbers.length = 0;
+      matchTypes.length = 0;
     
-    //Reset arays
-    matchNumbers.length = 0;
-    matchTypes.length = 0;
+      //Get the next team number
+      var teamCell = a + 4;
+      var teamNumber = SpreadsheetApp.getActiveSheet().getRange('Team Matches!C'+teamCell).getValue();
     
-    //Get the next team number
-    var teamCell = a + 4;
-    var teamNumber = SpreadsheetApp.getActiveSheet().getRange('Team Matches!C'+teamCell).getValue();
+      setStatus('Imporing team '+ teamNumber + "'s matches")
     
-    setStatus('Imporing team '+ teamNumber + "'s matches")
-    
-    //Pull the data from TBA  
-    var url = "https://www.thebluealliance.com/api/v3/team/frc"+teamNumber+"/event/"+eventKey+"/matches";
-    var options = {
-      "method": "GET",
-      "headers": {
-        "X-TBA-Auth-Key": "ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6"
-      },
-      "payload": {
+      //Pull the data from TBA  
+      var tbaImportJSON = importTBA("/team/frc"+teamNumber+"/event/"+eventKey+"/matches")
+  
+      //Get the spcific data that we want
+      for(var j = 0; j < tbaImportJSON.length; j++){
+        var z = tbaImportJSON[j].comp_level.toString()
+        if(z.indexOf("qm")>-1){
+          matchNumbers.push([tbaImportJSON[j].match_number]);
+          matchTypes.push([tbaImportJSON[j].comp_level]);
+        }
       }
-    };
-    var tbaImport2 = JSON.parse(UrlFetchApp.fetch(url, options));
-  
-    //Log the response  
-    Logger.log(tbaImport2);
-  
-    //Get the spcific data that we want
-    for(var j = 0; j < tbaImport2.length; j++){
-     var z = tbaImport2[j].comp_level.toString()
-     if(z.indexOf("qm")>-1){
-       matchNumbers.push([tbaImport2[j].match_number]);
-       matchTypes.push([tbaImport2[j].comp_level]);
+      
+      //Sort the data
+      matchNumbers.sort(function(a, b){return a - b});
+      
+      // Fill up the rest of the aray with empty strings
+      for(var x = matchNumbers.length; x < 15; x++) {
+        matchNumbers[x] = "";
+      }
+      
+      // Store the data in a master 2D array
+      allMatchNumbers[a] = matchNumbers;
+      // Delete the varable
+      delete matchNumbers;
     }
-    }
-    //Sort the data
-    matchNumbers.sort(function(a, b){return a - b});
-    
-    //Put the data in the sheet  
-    var rowInTeamsSheet = a + 4; 
-    var ceell = matchNumbers.length; 
-    var columnInTeamsSheet = SpreadsheetApp.getActiveSheet().getRange('Team Matches!F'+(ceell+104)).getValue();
-    SpreadsheetApp.getActiveSheet().getRange('Team Matches!D'+rowInTeamsSheet+':'+columnInTeamsSheet+rowInTeamsSheet).setValues([matchNumbers]);
+    // Put the data into the sheet
+    SpreadsheetApp.getActiveSheet().getRange('Team Matches!D4:R' + (3 + numberOfTeams)).setValues(allMatchNumbers);
+    //Disable Function
+    //SpreadsheetApp.getActiveSheet().getRange('Big Brother!D15').setValue('Disabled');
+    setStatus('Done');
   }
-  //Disable Function
-  SpreadsheetApp.getActiveSheet().getRange('Big Brother!D15').setValue('Disabled');
-  setStatus('Done')
-}
 }
 
 function importTBA(urlEnd){
@@ -229,7 +205,7 @@ function importTBA(urlEnd){
     var options = {
       "method": "GET",
       "headers": {
-        "X-TBA-Auth-Key": "ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6"
+        "X-TBA-Auth-Key": getTBAKey()
       },
       "payload": {
       }
@@ -245,6 +221,9 @@ function setStatus(text){
 
 function getEventKey(){
   return SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
+}
+function getTBAKey(){
+  return "ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6";
 }
 
 
