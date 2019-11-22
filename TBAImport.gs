@@ -142,18 +142,17 @@ function ImportTeamsMatches(){
     //Clear old match data
     setStatus("Clearing team's matches")
     ClearTeamsMatches()
-  
+    
     setStatus("Importing team's matched from TBA")
+   
+    // Import matches //
+    
     //Get event key from TBA Import sheet
     var eventKey = getEventKey();
-  
-  
-    //Import matches
-  
     //Get the number of teams to determen how manny times the folowing for loop needs to run
     var numberOfTeams = SpreadsheetApp.getActiveSheet().getRange('Team Matches!D105').getValue();
-    //Import matches loop, this is where we get the match data for every team
-  
+    var allTeams = SpreadsheetApp.getActiveSheet().getRange('Team Matches!C4:C' + (3 + numberOfTeams)).getValues();
+    
     // Go though all of the teams, and import their matches
     for(var a = 0; a < numberOfTeams; a++){
       matchNumbers = []
@@ -162,10 +161,11 @@ function ImportTeamsMatches(){
       matchTypes.length = 0;
     
       //Get the next team number
-      var teamCell = a + 4;
-      var teamNumber = SpreadsheetApp.getActiveSheet().getRange('Team Matches!C'+teamCell).getValue();
-    
-      setStatus('Imporing team '+ teamNumber + "'s matches")
+      //var teamCell = a + 4;
+      var teamNumber = allTeams[a][0] //SpreadsheetApp.getActiveSheet().getRange('Team Matches!C'+teamCell).getValue();
+      
+      // The folowing line bogs down the script. Uncomment only for debuging
+      //setStatus('Imporing team '+ teamNumber + "'s matches")
     
       //Pull the data from TBA  
       var tbaImportJSON = importTBA("/team/frc"+teamNumber+"/event/"+eventKey+"/matches")
