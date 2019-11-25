@@ -24,12 +24,14 @@ function onOpen() {
 
 // Clears the match schedule, teams list, and team's matches data
 function ClearData() {
-  if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B21').getValue() == 1){
+  //if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B21').getValue() == 1){
+  if(getValue(bigBrother, 'B', '21') == 1) {
     ClearMatchSchedule()
     ClearTeams()
     ClearTeamsMatches()
     
-    SpreadsheetApp.getActiveSheet().getRange('Big Brother!D21').setValue('Disabled');
+    //SpreadsheetApp.getActiveSheet().getRange('Big Brother!D21').setValue('Disabled');
+    setValue(bigBrother, 'D', 21, 'Disabled');
   } 
 }
 
@@ -44,6 +46,10 @@ function ClearTeams() {
 // Clears the team's matches data
 function ClearTeamsMatches() {
   clearContent(teamsMatches, 'D', 4, 'R', 103);
+}
+// Clears the team's matches data
+function ClearMatchTimes() {
+  clearContent(matchSchedule, 'AJ', 4, 'AL', 152);
 }
 
 ////// General functions for ease of use //////

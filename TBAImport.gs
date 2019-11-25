@@ -3,8 +3,8 @@
 // Gets the start times of every match from the event specified in 'Big Brother', and puts them into the spreadsheet, so they can be made into twitch links
 function getTimes() {
   // Clear old Times
-  setStatus('Clear old Times');
-  SpreadsheetApp.getActive().getActiveSheet().getRange('Match Schedule!AJ4:AL152').clearContent();
+  setStatus('Clearing old Times');
+  ClearMatchTimes();
   
   /// Pull from TBA ///
   setStatus('Importing Match Times');
@@ -27,9 +27,10 @@ function getTimes() {
   }
   
   //Put the times into the sheet
-  SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AL4:AL' + (match_numbers.length+3)).setValues(match_numbers);
-  SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AK4:AK' + (match_types.length+3)).setValues(match_types);
-  SpreadsheetApp.getActiveSheet().getRange('Match Schedule!AJ4:AJ' + (match_time.length+3)).setValues(match_time);
+  var endRow = match_numbers.length + 3;
+  setValues(matchSchedule, 'AL', 4, 'AL', endRow, match_numbers)
+  setValues(matchSchedule, 'AK', 4, 'AK', endRow, match_types)
+  setValues(matchSchedule, 'AJ', 4, 'AJ', endRow, match_time)
   
   setStatus('Done')
 }
@@ -38,8 +39,8 @@ function getTimes() {
 function ImportSchedule() {
   
   // If the function is 'enabled' in the big brother sheet, then run the code
-  if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B18').getValue() == 1){
-   
+  //SpreadsheetApp.getActiveSheet().getRange('Big Brother!B18').getValue() == 1
+  if(getValue(bigBrother, 'B', 18) == 1) {
     //Clear old match data
     setStatus('Clearing match schedule')
     ClearMatchSchedule();
@@ -76,19 +77,21 @@ function ImportSchedule() {
     }
     
     //Put the match schedule into the sheet
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!D2:D' + (redOne.length+1)).setValues(redOne);
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!E2:E' + (redTwo.length+1)).setValues(redTwo);
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!F2:F' + (redThree.length+1)).setValues(redThree);  
-  
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!G2:G' + (blueOne.length+1)).setValues(blueOne);  
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!H2:H' + (blueTwo.length+1)).setValues(blueTwo);  
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!I2:I' + (blueThree.length+1)).setValues(blueThree);  
-  
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!C2:C' + (matchNumber.length+1)).setValues(matchNumber);
-    SpreadsheetApp.getActiveSheet().getRange('Match Schedule!B2:B' + (matchType.length+1)).setValues(matchType); 
-    //Disable Function
-    SpreadsheetApp.getActiveSheet().getRange('Big Brother!D18').setValue('Disabled');
+    endRow = redOne.length + 1
     
+    setValues(matchSchedule, 'D', 2, 'D', endRow, redOne);
+    setValues(matchSchedule, 'E', 2, 'E', endRow, redTwo);
+    setValues(matchSchedule, 'F', 2, 'F', endRow, redThree);
+
+    setValues(matchSchedule, 'G', 2, 'G', endRow, blueOne);
+    setValues(matchSchedule, 'H', 2, 'H', endRow, blueTwo);
+    setValues(matchSchedule, 'I', 2, 'I', endRow, blueThree);
+
+    setValues(matchSchedule, 'C', 2, 'C', endRow, matchNumber);
+    setValues(matchSchedule, 'B', 2, 'B', endRow, matchType);    
+    
+    //Disable Function
+    setValue(bigBrother, 'D', 18, 'Disabled')
     setStatus('Done')
   }
 }
