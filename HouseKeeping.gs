@@ -9,6 +9,7 @@ var blue3 = 'Blue 3';
 var bigBrother = 'Big Brother';
 var matchSchedule = 'Match Schedule';
 var teamsMatches = 'Team Matches';
+var dataByTeam = 'Data By Team';
 
 // Create the menue when ever the spreadsheet is opened
 function onOpen() {
