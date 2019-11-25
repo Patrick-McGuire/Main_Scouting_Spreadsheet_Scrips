@@ -24,65 +24,63 @@ function onOpen() {
 
 // Clears the match schedule, teams list, and team's matches data
 function ClearData() {
-  //if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B21').getValue() == 1){
-  if(getValue(bigBrother, 'B', '21') == 1) {
+  if(getValue(bigBrother, 'B21') == 1) {
     ClearMatchSchedule()
     ClearTeams()
     ClearTeamsMatches()
     
-    //SpreadsheetApp.getActiveSheet().getRange('Big Brother!D21').setValue('Disabled');
-    setValue(bigBrother, 'D', 21, 'Disabled');
+    setValue(bigBrother, 'D21', 'Disabled');
   } 
 }
 
 // Clears the match schedule, teams list, and team's matches data
 function ClearMatchSchedule() {
-  clearContent(matchSchedule, 'B', 2, 'I', 152);
+  clearContent(matchSchedule, 'B2', 'I152');
 }
 // Clears the teams list
 function ClearTeams() {
-  clearContent(teamsMatches, 'C', 4, 'C', 103);
+  clearContent(teamsMatches, 'C4', 'C103');
 }
 // Clears the team's matches data
 function ClearTeamsMatches() {
-  clearContent(teamsMatches, 'D', 4, 'R', 103);
+  clearContent(teamsMatches, 'D4', 'R103');
 }
 // Clears the team's matches data
 function ClearMatchTimes() {
-  clearContent(matchSchedule, 'AJ', 4, 'AL', 152);
+  clearContent(matchSchedule, 'AJ4', 'AL152');
 }
 
 ////// General functions for ease of use //////
 
 // Clears content of a range
-function clearContent(sheet, startColumn, startRow, endColumn, endRow) {
-  SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startColumn, startRow, endColumn, endRow)).clearContent();
+function clearContent(sheet, startCell, endCell) {
+  SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startCell, endCell)).clearContent();
 }
 
 // Returns the values of a range of cells in the form of a array
-function getValues(sheet, startColumn, startRow, endColumn, endRow) {
-  return SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startColumn, startRow, endColumn, endRow)).getValues();
+function getValues(sheet, startCell, endCell) {
+  return SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startCell, endCell)).getValues();
 }
 // Returns the value of a single cell
-function getValue(sheet, startColumn, startRow) {
-  return SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startColumn, startRow, "", 0)).getValue();
+function getValue(sheet, startCell) {
+  return SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startCell, "")).getValue();
 }
 
 // Sets the value of a group of cells
-function setValues(sheet, startColumn, startRow, endColumn, endRow, values) {
-  SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startColumn, startRow, endColumn, endRow)).setValues(values);
+function setValues(sheet, startCell, endCell, values) {
+  SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startCell, endCell)).setValues(values);
 }
 // Sets the value of a single cells
-function setValue(sheet, startColumn, startRow, value) {
-  SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startColumn, startRow, "", 0)).setValue(value);
+function setValue(sheet, startCell, value) {
+  SpreadsheetApp.getActive().getActiveSheet().getRange(getRangeString(sheet, startCell, "")).setValue(value);
 }
 
 // Returns the string of a range
-function getRangeString(sheet, startColumn, startRow, endColumn, endRow) {
-  if(endColumn == '' || endRow == 0) {
-    return "" + "'" + sheet + "'"  + "!" + startColumn + startRow;
+function getRangeString(sheet, startCell, endCell) {
+  if(endCell == "" || endCell == 0) {
+    return "" + "'" + sheet + "'"  + "!" + startCell;
   }
-  return "" + "'" + sheet + "'"  + "!" + startColumn + startRow + ':' + endColumn + endRow;
+  return "" + "'" + sheet + "'"  + "!" + startCell + ':' + endCell;
 }
 
 

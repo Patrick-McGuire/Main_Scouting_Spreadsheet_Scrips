@@ -28,9 +28,9 @@ function getTimes() {
   
   //Put the times into the sheet
   var endRow = match_numbers.length + 3;
-  setValues(matchSchedule, 'AL', 4, 'AL', endRow, match_numbers)
-  setValues(matchSchedule, 'AK', 4, 'AK', endRow, match_types)
-  setValues(matchSchedule, 'AJ', 4, 'AJ', endRow, match_time)
+  setValues(matchSchedule, 'AL4', 'AL'+ endRow, match_numbers)
+  setValues(matchSchedule, 'AK4', 'AK'+ endRow, match_types)
+  setValues(matchSchedule, 'AJ4', 'AJ'+ endRow, match_time)
   
   setStatus('Done')
 }
@@ -39,8 +39,7 @@ function getTimes() {
 function ImportSchedule() {
   
   // If the function is 'enabled' in the big brother sheet, then run the code
-  //SpreadsheetApp.getActiveSheet().getRange('Big Brother!B18').getValue() == 1
-  if(getValue(bigBrother, 'B', 18) == 1) {
+  if(getValue(bigBrother, 'B18') == 1) {
     //Clear old match data
     setStatus('Clearing match schedule')
     ClearMatchSchedule();
@@ -77,21 +76,21 @@ function ImportSchedule() {
     }
     
     //Put the match schedule into the sheet
-    endRow = redOne.length + 1
+    var endRow = redOne.length + 1;
     
-    setValues(matchSchedule, 'D', 2, 'D', endRow, redOne);
-    setValues(matchSchedule, 'E', 2, 'E', endRow, redTwo);
-    setValues(matchSchedule, 'F', 2, 'F', endRow, redThree);
+    setValues(matchSchedule, 'D2', 'D' + endRow, redOne);
+    setValues(matchSchedule, 'E2', 'E' + endRow, redTwo);
+    setValues(matchSchedule, 'F2', 'F' + endRow, redThree);
 
-    setValues(matchSchedule, 'G', 2, 'G', endRow, blueOne);
-    setValues(matchSchedule, 'H', 2, 'H', endRow, blueTwo);
-    setValues(matchSchedule, 'I', 2, 'I', endRow, blueThree);
+    setValues(matchSchedule, 'G2', 'G' + endRow, blueOne);
+    setValues(matchSchedule, 'H2', 'H' + endRow, blueTwo);
+    setValues(matchSchedule, 'I2', 'I' + endRow, blueThree);
 
-    setValues(matchSchedule, 'C', 2, 'C', endRow, matchNumber);
-    setValues(matchSchedule, 'B', 2, 'B', endRow, matchType);    
+    setValues(matchSchedule, 'C2', 'C' + endRow, matchNumber);
+    setValues(matchSchedule, 'B2', 'B' + endRow, matchType);    
     
     //Disable Function
-    setValue(bigBrother, 'D', 18, 'Disabled')
+    setValue(bigBrother, 'D18', 'Disabled')
     setStatus('Done')
   }
 }
@@ -99,8 +98,8 @@ function ImportSchedule() {
 // Imports a list of teams for the event specified in 'Big Brother'from TBA, and puts it into the sheet
 function ImportTeams() {
   // If the function is 'enabled' in the big brother sheet, then run the code
-  if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B12').getValue() == 1){
-  
+  if(getValue(bigBrother, 'B12') == 1){
+    
     var listOfTeams = [];
   
     //Clear old data
@@ -112,6 +111,7 @@ function ImportTeams() {
   
     //Import teams
     setStatus('Importing teams from TBA')
+    
     var tbaImportJSON = importTBA("/event/"+eventKey+"/teams");  
   
     for(var j = 0; j < tbaImportJSON.length ; j++){
@@ -122,18 +122,19 @@ function ImportTeams() {
     listOfTeams.sort(function(a, b){return a - b});
   
     //Put the team numbers into the sheet
-    SpreadsheetApp.getActiveSheet().getRange('Team Matches!C4:C' + (listOfTeams.length+3)).setValues(listOfTeams);
-  
+    var endRow = listOfTeams.length + 3;
+    setValues(teamsMatches, 'C4', 'C' + endRow, listOfTeams);
+    
     //Disable Function
-    SpreadsheetApp.getActiveSheet().getRange('Big Brother!D12').setValue('Disabled');
+    setValue(bigBrother, 'D12', 'Disabled');
     setStatus('Done')
   };
 };
 
 // Imports every match of every team for the event specified in 'Big Brother'from TBA, and puts it into the sheet
 function ImportTeamsMatches(){
-  
-  if(SpreadsheetApp.getActiveSheet().getRange('Big Brother!B15').getValue() == 1){
+  if(getValue(bigBrother, 'B15') == 1){
+   
     // Import Teams
     ImportTeams()
   
@@ -152,23 +153,23 @@ function ImportTeamsMatches(){
     
     //Get event key from TBA Import sheet
     var eventKey = getEventKey();
+    
     //Get the number of teams to determen how manny times the folowing for loop needs to run
-    var numberOfTeams = SpreadsheetApp.getActiveSheet().getRange('Team Matches!D105').getValue();
-    var allTeams = SpreadsheetApp.getActiveSheet().getRange('Team Matches!C4:C' + (3 + numberOfTeams)).getValues();
+    var numberOfTeams = getValue(teamsMatches, 'D105');
+    var endRow = 3 + numberOfTeams;
+    var allTeams = getValues(teamsMatches, 'C4', 'C' + endRow);
     
     // Go though all of the teams, and import their matches
     for(var a = 0; a < numberOfTeams; a++){
-      matchNumbers = []
+      matchNumbers = [];
+      
       //Reset arays
       matchNumbers.length = 0;
       matchTypes.length = 0;
     
       //Get the next team number
       //var teamCell = a + 4;
-      var teamNumber = allTeams[a][0] //SpreadsheetApp.getActiveSheet().getRange('Team Matches!C'+teamCell).getValue();
-      
-      // The folowing line bogs down the script. Uncomment only for debuging
-      //setStatus('Imporing team '+ teamNumber + "'s matches")
+      var teamNumber = allTeams[a][0]
     
       //Pull the data from TBA  
       var tbaImportJSON = importTBA("/team/frc"+teamNumber+"/event/"+eventKey+"/matches")
@@ -192,13 +193,15 @@ function ImportTeamsMatches(){
       
       // Store the data in a master 2D array
       allMatchNumbers[a] = matchNumbers;
+      
       // Delete the varable
       delete matchNumbers;
     }
     // Put the data into the sheet
-    SpreadsheetApp.getActiveSheet().getRange('Team Matches!D4:R' + (3 + numberOfTeams)).setValues(allMatchNumbers);
+    setValues(teamsMatches, 'D4', 'R' + endRow, allMatchNumbers);
+    
     //Disable Function
-    //SpreadsheetApp.getActiveSheet().getRange('Big Brother!D15').setValue('Disabled');
+    setValue(bigBrother, 'D15', 'Disabled');
     setStatus('Done');
   }
 }
@@ -219,11 +222,11 @@ function importTBA(urlEnd){
 }
 
 function setStatus(text){
-  SpreadsheetApp.getActiveSheet().getRange('Big Brother!E16').setValue(text);
+  setValue(bigBrother, 'E16', text);
 }
 
 function getEventKey(){
-  return SpreadsheetApp.getActiveSheet().getRange('Big Brother!E13').getValue();
+  return getValue(bigBrother, 'E13');
 }
 function getTBAKey(){
   return "ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6";
