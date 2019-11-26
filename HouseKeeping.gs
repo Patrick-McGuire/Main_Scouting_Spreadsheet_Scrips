@@ -1,8 +1,8 @@
 ///////////// Basic house keeping stuff /////////////
 // Sheet names
 var red1 = 'Red 1';
-var red2 = 'Red 1';
-var red3 = 'Red 1';
+var red2 = 'Red 2';
+var red3 = 'Red 3';
 var blue1 = 'Blue 1';
 var blue2 = 'Blue 2';
 var blue3 = 'Blue 3';
@@ -82,14 +82,6 @@ function getRangeString(sheet, startCell, endCell) {
     return "" + "'" + sheet + "'"  + "!" + startCell;
   }
   return "" + "'" + sheet + "'"  + "!" + startCell + ':' + endCell;
-}
-
-
-
-function test() {
-  setValue(red1, "A", 1, "Bruh");
-  setValues(red1, 'B', 1, 'C', 1, [["Duh", "Meh"]]);
-  SpreadsheetApp.getActive().getActiveSheet().getRange('Red 1!A1').setValue();
 }
   
   
