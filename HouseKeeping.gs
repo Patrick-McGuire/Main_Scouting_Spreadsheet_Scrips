@@ -11,7 +11,12 @@ var matchSchedule = 'Match Schedule';
 var teamsMatches = 'Team Matches';
 var dataByTeam = 'Data By Team';
 // Commands
-var enterDataCommand = '/enterdata'
+var enterDataCommand = '/enterdata';
+var importTeamsCommand = '/importteams';
+var importTeamsMatchesCommand = '/importteamsmatches';
+var importmatchScheduleCommand = 'importschedule';
+var importmatchTimesCommand = 'importmatchtimes';
+var testCommand = '/test1254';
 
 // Create the menue when ever the spreadsheet is opened
 function onOpen() {
