@@ -22,6 +22,25 @@ function enterAllData() {
       
       matchData2c[x] = [rawMatchData[x][0], rawMatchData[x][2]];
     }
+    
+    // Figure out if there is any data in matchdata besides empty strings
+    var dataInSet = false;
+    for(var x = 0; x < matchData.length; x++) {
+      if(matchData[x][0] != "") {
+        dataInSet = true;
+        break;
+      }
+    }
+    
+    // If there is data, fill any empty strings with 0
+    if(dataInSet) {
+      for(var x = 0; x < matchData.length; x++) {
+        if(matchData[x][0] == '') {
+          matchData[x][0] = 0;
+        }
+      }
+    }
+
     // Get the team ID, and match ID from the existing array
     var teamID = teamMatchIDs[i][0];
     var matchID = teamMatchIDs[i][1];

@@ -14,8 +14,8 @@ var dataByTeam = 'Data By Team';
 var enterDataCommand = '/enterdata';
 var importTeamsCommand = '/importteams';
 var importTeamsMatchesCommand = '/importteamsmatches';
-var importmatchScheduleCommand = 'importschedule';
-var importmatchTimesCommand = 'importmatchtimes';
+var importmatchScheduleCommand = '/importschedule';
+var importmatchTimesCommand = '/importmatchtimes';
 var testCommand = '/test1254';
 
 // Create the menue when ever the spreadsheet is opened
