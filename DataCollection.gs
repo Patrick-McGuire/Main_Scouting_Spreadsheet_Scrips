@@ -1,6 +1,6 @@
 ///////////// All functions for collecting data from the data input sheets /////////////
 
-// 
+// Import all sheets that we need to import from
 function enterAllData() {
   // Get all of the team IDs and match IDs from the compiled list in the big brother sheet
   var teamMatchIDs = getValues(bigBrother, 'C26', 'D31');

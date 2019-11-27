@@ -10,6 +10,8 @@ var bigBrother = 'Big Brother';
 var matchSchedule = 'Match Schedule';
 var teamsMatches = 'Team Matches';
 var dataByTeam = 'Data By Team';
+// Commands
+var enterDataCommand = '/enterdata'
 
 // Create the menue when ever the spreadsheet is opened
 function onOpen() {
