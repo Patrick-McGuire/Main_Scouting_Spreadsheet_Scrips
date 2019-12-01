@@ -10,6 +10,7 @@ var bigBrother = 'Big Brother';
 var matchSchedule = 'Match Schedule';
 var teamsMatches = 'Team Matches';
 var dataByTeam = 'Data By Team';
+var enterAssist = 'Enter Assist';
 // Commands
 var enterDataCommand = '/enterdata';
 var importTeamsCommand = '/importteams';
@@ -90,5 +91,15 @@ function getRangeString(sheet, startCell, endCell) {
   }
   return "" + "'" + sheet + "'"  + "!" + startCell + ':' + endCell;
 }
+
+function test() {
+  b = getValues(enterAssist, "G3", "Z14");
+  a
+}
+
+
+
+
+
   
   
