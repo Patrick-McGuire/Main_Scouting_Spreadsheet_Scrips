@@ -91,15 +91,3 @@ function getRangeString(sheet, startCell, endCell) {
   }
   return "" + "'" + sheet + "'"  + "!" + startCell + ':' + endCell;
 }
-
-function test() {
-  b = getValues(enterAssist, "G3", "Z14");
-  a
-}
-
-
-
-
-
-  
-  
