@@ -11,6 +11,7 @@ var matchSchedule = 'Match Schedule';
 var teamsMatches = 'Team Matches';
 var dataByTeam = 'Data By Team';
 var enterAssist = 'Enter Assist';
+var robotPics = 'Robot Pics';
 // Commands
 var enterDataCommand = '/enterdata';
 var importTeamsCommand = '/importteams';
@@ -27,6 +28,7 @@ function onOpen() {
   .addItem('Import Teams', 'ImportTeams')
   .addItem('Import Teams Matches', 'ImportTeamsMatches')
   .addItem('Import Match Schedule', 'ImportSchedule')
+  .addItem('Get Pics', 'getPics')
   .addItem('Test', 'test')
   .addToUi();
 }
