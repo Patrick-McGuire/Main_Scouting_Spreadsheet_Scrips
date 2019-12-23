@@ -29,7 +29,7 @@ function onOpen() {
   .addItem('Import Teams Matches', 'ImportTeamsMatches')
   .addItem('Import Match Schedule', 'ImportSchedule')
   .addItem('Get Pics', 'getPics')
-  .addItem('Test', 'test')
+  .addItem('Test', 'test1')
   .addToUi();
 }
 
