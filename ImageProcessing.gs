@@ -77,6 +77,7 @@ function reformatSheet() {
 }
 
 function addFormatingRule() {
+  return;
   //var sheets = ["Sheet342"];
   var sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
   var out = [];
