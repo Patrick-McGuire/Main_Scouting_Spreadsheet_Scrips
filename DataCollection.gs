@@ -2,12 +2,14 @@
 
 // Import all sheets that we need to import from
 function enterAllData() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+  
   // Get all of the team IDs and match IDs from the compiled list in the big brother sheet
-  var teamMatchIDs = getValues(enterAssist, 'C3', 'D8');
-  var allMatchData = getValues(enterAssist, 'G3', 'R22')
+  var teamMatchIDs = getValues(spreadsheet, enterAssist, 'C3', 'D8');
+  var allMatchData = getValues(spreadsheet, enterAssist, 'G3', 'R22')
   
   // Put the data back in for prev match data
-  setValues(enterAssist, "G25", "R44", allMatchData)
+  setValues(spreadsheet, enterAssist, "G25", "R44", allMatchData)
   
   // List of every sheet we need to import from
   var sheetsToEnter = [red1, red2, red3, blue1, blue2, blue3];
@@ -49,11 +51,11 @@ function enterAllData() {
     var bottomRow = (teamID * 43);
     
     // Put the data back into the sheet
-    setValues(dataByTeam, "" + matchID + topRow, "" + matchID + bottomRow, matchData) 
+    setValues(spreadsheet, dataByTeam, "" + matchID + topRow, "" + matchID + bottomRow, matchData) 
     
     //Clear the "Value:" data. This horrible array takes less time to set than two clear value funtions, sooo.... we use it (~4s-6s less time total)
     var clearedValues = [["", "='Big Brother'!O4", ""], ["", "='Big Brother'!O5", ""], ["", "='Big Brother'!O6", ""], ["", "='Big Brother'!O7", ""], ["", "='Big Brother'!O8", ""], ["", "='Big Brother'!O9", ""], ["", "='Big Brother'!O10", ""], ["", "='Big Brother'!O11", ""], ["", "='Big Brother'!O12", ""], ["", "='Big Brother'!O13", ""], ["", "='Big Brother'!O14", ""], ["", "='Big Brother'!O15", ""], ["", "='Big Brother'!O16", ""], ["", "='Big Brother'!O17", ""], ["", "='Big Brother'!O18", ""], ["", "='Big Brother'!O19", ""], ["", "='Big Brother'!O20", ""], ["", "='Big Brother'!O21", ""], ["", "='Big Brother'!O22", ""], ["", "='Big Brother'!O23", ""]]
-    setValues(activeSheet, 'D3', 'F22', clearedValues);
+    setValues(spreadsheet, activeSheet, 'D3', 'F22', clearedValues);
   }
 }
 

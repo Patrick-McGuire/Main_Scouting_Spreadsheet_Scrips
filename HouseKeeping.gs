@@ -40,56 +40,56 @@ function onOpen() {
 }
 
 // Clears the match schedule, teams list, and team's matches data
-function ClearData() {
-  if(getValue(bigBrother, 'B21') == 1) {
-    ClearMatchSchedule()
-    ClearTeams()
-    ClearTeamsMatches()
+function ClearData(spreadsheet) {
+  if(getValue(spreadsheet, bigBrother, 'B21') == 1) {
+    ClearMatchSchedule(spreadsheet)
+    ClearTeams(spreadsheet)
+    ClearTeamsMatches(spreadsheet)
     
-    setValue(bigBrother, 'D21', 'Disabled');
+    setValue(spreadsheet, bigBrother, 'D21', 'Disabled');
   } 
 }
 
 // Clears the match schedule, teams list, and team's matches data
-function ClearMatchSchedule() {
-  clearContent(matchSchedule, 'B2', 'I152');
+function ClearMatchSchedule(spreadsheet) {
+  clearContent(spreadsheet, matchSchedule, 'B2', 'I152');
 }
 // Clears the teams list
-function ClearTeams() {
-  clearContent(teamsMatches, 'C4', 'C103');
+function ClearTeams(spreadsheet) {
+  clearContent(spreadsheet, teamsMatches, 'C4', 'C103');
 }
 // Clears the team's matches data
-function ClearTeamsMatches() {
-  clearContent(teamsMatches, 'D4', 'R103');
+function ClearTeamsMatches(spreadsheet) {
+  clearContent(spreadsheet, teamsMatches, 'D4', 'R103');
 }
 // Clears the team's matches data
-function ClearMatchTimes() {
-  clearContent(matchSchedule, 'AJ4', 'AL152');
+function ClearMatchTimes(spreadsheet) {
+  clearContent(spreadsheet, matchSchedule, 'AJ4', 'AL152');
 }
 
 ////// General functions for ease of use //////
 
 // Clears content of a range
-function clearContent(sheet, startCell, endCell) {
-  SpreadsheetApp.getActiveSpreadsheet().getRange(getRangeString(sheet, startCell, endCell)).clearContent();
+function clearContent(spreadsheet, sheet, startCell, endCell) {
+  spreadsheet.getRange(getRangeString(sheet, startCell, endCell)).clearContent();
 }
 
 // Returns the values of a range of cells in the form of a array
-function getValues(sheet, startCell, endCell) {
-  return SpreadsheetApp.getActiveSpreadsheet().getRange(getRangeString(sheet, startCell, endCell)).getValues();
+function getValues(spreadsheet, sheet, startCell, endCell) {
+  return spreadsheet.getRange(getRangeString(sheet, startCell, endCell)).getValues();
 }
 // Returns the value of a single cell
-function getValue(sheet, startCell) {
-  return SpreadsheetApp.getActiveSpreadsheet().getRange(getRangeString(sheet, startCell, "")).getValue();
+function getValue(spreadsheet, sheet, startCell) {
+  return spreadsheet.getRange(getRangeString(sheet, startCell, "")).getValue();
 }
 
 // Sets the value of a group of cells
-function setValues(sheet, startCell, endCell, values) {
-  SpreadsheetApp.getActiveSpreadsheet().getRange(getRangeString(sheet, startCell, endCell)).setValues(values);
+function setValues(spreadsheet, sheet, startCell, endCell, values) {
+  spreadsheet.getRange(getRangeString(sheet, startCell, endCell)).setValues(values);
 }
 // Sets the value of a single cells
-function setValue(sheet, startCell, value) {
-  SpreadsheetApp.getActiveSpreadsheet().getRange(getRangeString(sheet, startCell, "")).setValue(value);
+function setValue(spreadsheet, sheet, startCell, value) {
+  spreadsheet.getRange(getRangeString(sheet, startCell, "")).setValue(value);
 }
 
 // Returns the string of a range

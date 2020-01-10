@@ -1,7 +1,8 @@
 function getPics() {
-  clearContent(robotPics, 'B5', 'C104');
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+  clearContent(spreadsheet, robotPics, 'B5', 'C104');
   
-  var folder = DriveApp.getFolderById(getTargetFolderID());
+  var folder = DriveApp.getFolderById(getTargetFolderID(spreadsheet));
   var contents = folder.getFiles();
  
   var file;
@@ -15,11 +16,11 @@ function getPics() {
     }
     data[i] = [file.getName(), file.getId()]
   } 
-  setValues(robotPics, 'B5', 'C' + (data.length + 4), data)
+  setValues(spreadsheet, robotPics, 'B5', 'C' + (data.length + 4), data)
 }
 
-function getTargetFolderID() {
-  return getValue(robotPics, 'H2');
+function getTargetFolderID(spreadsheet) {
+  return getValue(spreadsheet, robotPics, 'H2');
 }
 
 function reformatSheet() {
@@ -53,7 +54,7 @@ function reformatSheet() {
   if(newBKHeader == redColor || newBKSecond == redColor || targetBKHeader == redColor || targetBKSecond == redColor) {
     return;
   }
-  if(getValue(theme, 'E2') == "Disabled") {
+  if(getValue(spreadsheet, theme, 'E2') == "Disabled") {
     return;
   }
   
@@ -73,6 +74,7 @@ function reformatSheet() {
         }
       }
     }
+    break;
   }
 }
 
