@@ -1,4 +1,52 @@
 ///////////// All functions that import data from TBA /////////////
+//https://www.thebluealliance.com/api/v3/event/2020week0/matches?X-TBA-Auth-Key=ElyWdtB6HR7EiwdDXFmX2PDXQans0OMq83cdBcOhwri2TTXdMeYflYARvlbDxYe6
+function getInnerOuterData() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  
+  clearContent(spreadsheet, 'Inner', 'A2', 'F');
+  
+  var eventKey = getEventKey(spreadsheet);
+  
+  var tbaImportJSON = importTBA("/event/"+eventKey+"/matches");
+  
+  var match_numbers = [];
+  var match_types = [];
+  
+  var redInnerAuto = [];
+  var redOuterAuto = [];
+  var redInnerTele = [];
+  var redOuterTele = [];
+  
+  var blueInnerAuto = [];
+  var blueOuterAuto = [];
+  var blueInnerTele = [];
+  var blueOuterTele = [];
+  
+  for(var j = 0; j < tbaImportJSON.length ; j++){
+    match_numbers.push([tbaImportJSON[j].match_number]);
+    match_types.push([tbaImportJSON[j].comp_level]);
+    
+    redInnerAuto.push([tbaImportJSON[j].score_breakdown.red.autoCellsInner])
+    redOuterAuto.push([tbaImportJSON[j].score_breakdown.red.autoCellsOuter])
+    redInnerTele.push([tbaImportJSON[j].score_breakdown.red.teleopCellsInner])
+    redOuterTele.push([tbaImportJSON[j].score_breakdown.red.teleopCellsOuter])
+    
+    blueInnerAuto.push([tbaImportJSON[j].score_breakdown.blue.autoCellsInner])
+    blueOuterAuto.push([tbaImportJSON[j].score_breakdown.blue.autoCellsOuter])
+    blueInnerTele.push([tbaImportJSON[j].score_breakdown.blue.teleopCellsInner])
+    blueOuterTele.push([tbaImportJSON[j].score_breakdown.blue.teleopCellsOuter])
+  }
+  
+  var values = [];
+  for(var i = 0; i < redInnerAuto.length; i++) {
+    values.push([Number(redInnerAuto[i]) + Number(redInnerTele[i]), Number(redOuterAuto[i]) + Number(redOuterTele[i]), Number(blueInnerAuto[i]) + Number(blueInnerTele[i]), Number(blueOuterAuto[i]) + Number(blueOuterTele[i])]);
+  }
+  
+  var endRow = match_numbers.length + 1;
+  setValues(spreadsheet, 'Inner', 'A2', 'A'+ endRow, match_numbers)
+  setValues(spreadsheet, 'Inner', 'B2', 'B'+ endRow, match_types)
+  setValues(spreadsheet, 'Inner', 'C2', 'F'+ endRow, values)
+}
 
 // Gets the start times of every match from the event specified in 'Big Brother', and puts them into the spreadsheet, so they can be made into twitch links
 function getTimes() {
