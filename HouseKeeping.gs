@@ -35,7 +35,7 @@ function onOpen() {
   .addItem('Import Match Schedule', 'ImportSchedule')
   .addItem('Get Pics', 'getPics')
   .addItem('Update Theme', 'reformatSheet')
-  .addItem('Test', 'getInnerOuterData') //'testNOTHINGATACHEDHERE')
+  .addItem('Get Outer Inner OPR Data', 'getInnerOuterData')
   .addToUi();
 }
 
